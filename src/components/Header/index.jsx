@@ -1,21 +1,35 @@
+import { useNavigate } from 'react-router-dom';
 import { RiShutDownLine } from 'react-icons/ri';
+import { useAuth } from '../../hooks/auth';
+
+import { api } from '../../services/api';
 import { Container, Profile, Logout } from './style';
 
+import avatarPlaceholder from '../../assets/avatar_placeholder.svg';
+
 export function Header() {
+  const { signOut, user } = useAuth();
+  const navigation = useNavigate();
+
+  function handleSignOut() {
+    navigation('/');
+    signOut();
+  }
+
+  const avatarUrl = user.avatar
+    ? `${api.defaults.baseURL}/files/${user.avatar}`
+    : avatarPlaceholder;
   return (
     <Container>
       <Profile to='/profile'>
-        <img
-          src='https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=40&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-          alt='Foto usuário'
-        />
+        <img src={avatarUrl} alt={user.name} />
 
         <div>
           <span>Bem-vindo</span>
-          <strong>Magenta Magás</strong>
+          <strong>{user.name}</strong>
         </div>
       </Profile>
-      <Logout>
+      <Logout onClick={handleSignOut}>
         <RiShutDownLine />
       </Logout>
     </Container>
